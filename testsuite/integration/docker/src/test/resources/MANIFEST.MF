@@ -1,0 +1,4 @@
+Dependencies: com.ericsson.oss.itpf.security.cryptography.api services
+  export meta-inf, com.ericsson.oss.itpf.security.cryptography.impl
+  services export meta-inf, com.ericsson.oss.itpf.modeling.modelservice.api
+  export meta-inf, com.ericsson.oss.itpf.datalayer.dps.api export

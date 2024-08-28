@@ -1,0 +1,16 @@
+.settings/
+.project
+.classpath
+.vscode/
+
+target/
+.pmd
+*.orig
+
+# Output files
+*.log
+logs/
+
+# IntelliJ
+/.idea
+*.iml

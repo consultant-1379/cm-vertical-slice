@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<arquillian xmlns="http://jboss.org/schema/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <defaultProtocol type="Servlet 3.0" />
+
+    <engine>
+        <property name="deploymentExportPath">target/arquillian</property>
+    </engine>
+
+    <container qualifier="jboss_managed" default="false">
+        <configuration>
+            <property name="startupTimeoutInSeconds">300</property>
+            <property name="jbossHome">${jboss.home}</property>
+            <property name="serverConfig">standalone-enm-eap7.xml</property>
+            <property name="managementPort">10619</property> <!-- incremented by 629 from 9990 -->
+            <!--
+                To debug include:
+                   -agentlib:jdwp=transport=dt_socket,server=n,address=localhost:5005,suspend=y
+            -->
+            <property name="javaVmArguments">-Xmx6g -XX:+UseG1GC -XX:+UseStringDeduplication
+                -Djboss.socket.binding.port-offset=629
+                -Djboss.bind.address.internal=127.0.0.1
+                -Djboss.modules.system.pkgs=com.sun.crypto.provider
+                -Djboss.node.name=CM-VS-JEE-TEST
+                -Dcom.ericsson.oss.sdk.cluster.identifier=CM-VS-JEE
+                -Dcom.ericsson.oss.sdk.node.identifier=CM-VS-JEE-TEST
+                -Djboss.messaging.group.address=231.2.2.32
+                -Djboss.messaging.group.port=8714
+                -Djboss.tx.node.id=123456
+                -Djava.net.preferIPv4Stack=true
+                -Dcom.ericsson.oss.sdk.tracing.autoannotate=off
+                -Dcom.ericsson.oss.itpf.sdk.cache.statistic=off
+                -Dcom.ericsson.oss.sdk.config.properties.polling.period=15000
+                -Dericsson-model-service-root=${basedir}/target/model_repo
+                -DXML_REPO_PATH=${basedir}/target/model_repo/mdtrepo.xml
+                -Dcom.ericsson.oss.itpf.sdk.cache.persistence.location.absolute.path=${basedir}/target
+                -Dcom.ericsson.oss.itpf.sdk.external.configuration.folder.path=${basedir}/target/test-classes/jgroups
+                -Dcom.arjuna.orbportability.initialReferencesRoot=${basedir}/target
+                -Dnetwork_element_notifications_channelId=NetworkElementNotifications
+                -Dmed_service_consumer_channelId=//global/ClusteredMediationServiceConsumer
+                -Dmed_service_protocol_info=CM
+                -Drouter.cluster.join.waiting.time=1000
+                -DCmRouterPolicy.udp.mcast_addr=${unique.multicast.ip}
+                -DCmRouterPolicyDistributionCache.udp.mcast_addr=${unique.multicast.ip}
+                -DCmRouterPolicyDistributionCacheV2.udp.mcast_addr=${unique.multicast.ip}
+                -DCmRouterPolicyLoadCache.udp.mcast_addr=${unique.multicast.ip}
+                -Drouterclientcluster.udp.mcast_addr=${unique.multicast.ip}
+                -Dmdecore.udp.mcast_addr=${unique.multicast.ip}
+                -Dallocation.udp.mcast_addr=${unique.multicast.ip}
+                -Dmedcluster.udp.mcast_addr=${unique.multicast.ip}
+                -Dmsload.udp.mcast_addr=${unique.multicast.ip}
+                -Dunique.routerpolicycluster.udp.mcast_addr=${unique.multicast.ip}
+                -Dsfwk.upgrade.udp.mcast_addr=${unique.multicast.ip}
+                -Dsfwk.healthcheck.udp.mcast_addr=${unique.multicast.ip}
+                -Dsfwk.config.property.change.notifications.udp.mcast_addr=${unique.multicast.ip}
+                -Dsfwk.config.udp.mcast_addr=${unique.multicast.ip}
+                -Dsfwk.eservice.udp.mcast_addr=${unique.multicast.ip}
+                -Dsfwk.service.availability.udp.mcast_addr=${unique.multicast.ip}
+                -Dsdk.jgroups.distributed.lock.udp.mcast_addr=${unique.multicast.ip}
+                -Dsdk.jgroups.distributed.udp.mcast_addr=${unique.multicast.ip}
+                -Dsdk.jgroups.distributed.counter.udp.mcast_addr=${unique.multicast.ip}
+                -Dpib.udp.mcast_addr=${unique.multicast.ip}
+                -Dmodeling.jgroups.udp.mcast_addr=${unique.multicast.ip}
+                -DNecSubscriptionRegistryCache.udp.mcast_addr=${unique.multicast.ip}
+                -DPiciInventoryRequestCache.udp.mcast_addr=${unique.multicast.ip}
+                -Dvb.vip.address.ipv4=${visibroker.ip}
+                -Dnetsim.ip.address=${netsim.ip}
+                -DCERT_P12_PATH=${basedir}/target/test-classes/certificates/cert.p12
+                -DTRUST_POINTS_REPOSITORY=Directory:${basedir}/target/test-classes/certificates/
+                -DVBROKERDIR=${basedir}/target/MicroFocus/VisiBroker
+                -Dneo4j.server.credentials=${jboss.home}/standalone/data/dps/credentials/neo4j.properties
+                -Dneo4j.serverTransport=bolt
+                -Dneo4j.server.hostname=localhost
+                -Dneo4jIdBlockSize=1000
+                -Dneo4j.bolt.encryption=false
+            </property>
+        </configuration>
+    </container>
+
+    <container qualifier="jboss_remote" default="false">
+        <configuration>
+            <property name="managementAddress">10.45.239.30</property>
+            <property name="managementPort">${management.port}</property>
+            <property name="outputToConsole">true</property>
+            <property name="username">admin</property>
+            <property name="password">@dmin1234</property>
+            <property name="allowConnectingToRunningServer">true</property>
+            <property name="startupTimeoutInSeconds">120</property>
+        </configuration>
+    </container>
+
+</arquillian>

@@ -1,0 +1,12 @@
+ERICjgroupsconfig_CXP9033554
+# NEO4J
+ERICneo4jjcaapi_CXP9032725
+ERICneo4jjca_CXP9032726
+ERICdpsneo4j_CXP9032728
+# SG Specific
+ERICcryptographyserviceapi_CXP9031014
+ERICcryptographyservice_CXP9031013
+ERICmediationengineapi_CXP9031505
+ERICdpsmediationclient_CXP9031421
+ERICpib_CXP9030194
+ERIClicensecontrolmonitoringservice_CXP9031452

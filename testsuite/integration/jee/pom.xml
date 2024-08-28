@@ -1,0 +1,1355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>cm-vertical-slice-testsuite-integration</artifactId>
+        <groupId>com.ericsson.nms.mediation</groupId>
+        <version>2.0.4-SNAPSHOT</version>
+    </parent>
+    <artifactId>cm-vertical-slice-testsuite-integration-jee</artifactId>
+    <name>[${project.parent.artifactId}] TestSuite Integration JEE</name>
+
+    <properties>
+        <!-- Test suite to be run -->
+        <testsuite>FullTestSuite</testsuite>
+
+        <!-- Default netsim/visibroker IP configuration file for the Aquillian Vertical Slice vApp -->
+        <netsim.configuration.properties>src/test/resources/netsim_vapp.properties</netsim.configuration.properties>
+
+        <!-- Test -->
+        <version.junit>4.12</version.junit>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- CPP CM Sync BOM -->
+            <dependency>
+                <groupId>com.ericsson.oss.mediation.cm</groupId>
+                <artifactId>cpp-cm-sync-bom</artifactId>
+                <version>${version.cpp-cm-sync-bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Test -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- SLF4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JEE -->
+        <dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-jakartaee-8.0</artifactId>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Service Framework -->
+        <dependency>
+            <groupId>com.ericsson.oss.itpf.sdk</groupId>
+            <artifactId>sdk-services-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.oss.itpf.sdk</groupId>
+            <artifactId>sdk-modeled-eventbus-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.oss.itpf.sdk</groupId>
+            <artifactId>sdk-eventbus-jms-non-cdi</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Modeling -->
+        <dependency>
+            <groupId>com.ericsson.oss.itpf.modeling</groupId>
+            <artifactId>model-service-api-jar</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.oss.itpf.modeling</groupId>
+            <artifactId>model-deployment-jar</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.oss.itpf.modeling</groupId>
+            <artifactId>default-mdt-plugins-jar</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- DPS -->
+        <dependency>
+            <groupId>com.ericsson.oss.itpf.datalayer.dps</groupId>
+            <artifactId>dps-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.oss.itpf.datalayer.dps</groupId>
+            <artifactId>data-access-delegate-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Core Mediation API -->
+        <dependency>
+            <groupId>com.ericsson.nms.mediation</groupId>
+            <artifactId>core-mediation-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mediation Resolvers -->
+        <dependency>
+            <groupId>com.ericsson.oss.mediation.resolver</groupId>
+            <artifactId>dps-attribute-resolver-module</artifactId>
+            <type>zip</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.oss.mediation.resolver</groupId>
+            <artifactId>request-attribute-resolver-module</artifactId>
+            <type>zip</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.oss.mediation.resolver</groupId>
+            <artifactId>tss-resolver-module</artifactId>
+            <type>zip</type>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Network Element Connector -->
+        <dependency>
+            <groupId>com.ericsson.oss.mediation</groupId>
+            <artifactId>network-element-connector-api-jar</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Sync Node Event -->
+        <dependency>
+            <groupId>com.ericsson.oss.mediation.cm.events</groupId>
+            <artifactId>sync-node-event-jar</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Software Sync Event -->
+        <dependency>
+            <groupId>com.ericsson.oss.mediation.events</groupId>
+            <artifactId>software-sync-event-model-jar</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Cryptography -->
+        <dependency>
+            <groupId>com.ericsson.oss.itpf.security.cryptography</groupId>
+            <artifactId>cryptography-service-api-jar</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- JSCH (SSH Client) -->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+        </dependency>
+
+        <!-- JBoss -->
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-dist</artifactId>
+            <type>zip</type>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JBoss JMS Client -->
+        <!-- NB: required by MDT to send messages to its JMS Topic -->
+        <dependency>
+            <groupId>org.jboss.client</groupId>
+            <artifactId>jboss-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian and ShrinkWrap -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.arquillian</groupId>
+            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Arquillian addons -->
+        <dependency>
+            <groupId>org.eu.ingwar.tools</groupId>
+            <artifactId>arquillian-suite-extension</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/*.xml</exclude>
+                </excludes>
+            </testResource>
+            <testResource>
+                <directory>src/test/docker</directory>
+                <excludes>
+                    <exclude>**/cmvsjee/**</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <executions>
+                    <!-- Read the netsim IP configuration file -->
+                    <execution>
+                        <id>read-project-properties</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${netsim.configuration.properties}</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                    <!-- Set system properties -->
+                    <execution>
+                        <id>set-system-properties</id>
+                        <goals>
+                            <goal>set-system-properties</goal>
+                        </goals>
+                        <configuration>
+                            <properties>
+                                <!-- Set the location of the modelrepo.xml checksum file -->
+                                <property>
+                                    <name>repoChecksumFilePath</name>
+                                    <value>${project.build.directory}/model_repo/mdtrepo.checksum</value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Get version of dependencies defined in BOM as properties -->
+            <plugin>
+                <groupId>io.reformanda.semper</groupId>
+                <artifactId>dependencyversion-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <id>get-dependency-version</id>
+                        <goals>
+                            <goal>set-version</goal>
+                        </goals>
+                        <configuration>
+                            <propertySets>
+                                <propertySet>
+                                    <includes>
+                                        <include>org.jboss.as:jboss-as-dist:zip</include>
+                                        <include>com.ericsson.oss.mediation.resolver:dps-attribute-resolver-module:zip</include>
+                                        <include>com.ericsson.oss.mediation.resolver:request-attribute-resolver-module:zip</include>
+                                        <include>com.ericsson.oss.mediation.resolver:tss-resolver-module:zip</include>
+                                    </includes>
+                                </propertySet>
+                            </propertySets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Configure the testsuite to execute against a local (dockerized) netsim container -->
+        <profile>
+            <id>netsim_docker</id>
+            <activation>
+                <property>
+                    <name>netsim_docker</name>
+                </property>
+            </activation>
+            <properties>
+                <netsim.configuration.properties>src/test/resources/netsim_docker.properties</netsim.configuration.properties>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <configuration>
+                            <failOnError>true</failOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>netsim-start</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <echo message="Starting docker netsim ..." />
+                                        <exec executable="./docker-netsim.sh" dir="${basedir}/src/test/docker/cmvsjee" failonerror="true">
+                                            <arg value="up" />
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>netsim-stop</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <echo message="Stopping docker netsim ..." />
+                                        <exec executable="./docker-netsim.sh" dir="${basedir}/src/test/docker/cmvsjee" failonerror="true">
+                                            <arg value="down" />
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>execute_jee_tests</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Models -->
+                <model.jars.dir>target/model-jars</model.jars.dir>
+                <model.repo.dir>${project.build.directory}/model_repo/etc/model</model.repo.dir>
+                <xml.repo>${project.build.directory}/model_repo/mdtrepo.xml</xml.repo>
+                <!-- JBoss -->
+                <jboss.home.dir>${project.build.directory}/jboss-eap-${org.jboss.as:jboss-as-dist:zip.version}</jboss.home.dir>
+                <jboss.modules.dir>${jboss.home.dir}/modules/system/layers/base</jboss.modules.dir>
+                <jboss.deployments.dir>${jboss.home.dir}/standalone/deployments</jboss.deployments.dir>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>clean-jboss-directories</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${jboss.home.dir}/standalone</directory>
+                                            <includes>
+                                                <include>log/*</include>
+                                                <include>data/*</include>
+                                                <include>tmp/*</include>
+                                                <include>deployments/*</include>
+                                            </includes>
+                                            <excludes>
+                                                <exclude>configuration/*</exclude>
+                                                <exclude>lib/*</exclude>
+                                            </excludes>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <!-- Copy model jars to be deployed -->
+                            <execution>
+                                <id>download-models</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <stripVersion>true</stripVersion>
+                                    <outputDirectory>${model.jars.dir}</outputDirectory>
+                                    <artifactItems>
+                                        <!-- Platform Integration Bridge model -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.common</groupId>
+                                            <artifactId>PlatformIntegrationBridgeModel-model</artifactId>
+                                        </artifactItem>
+
+                                        <!-- DPS -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.datalayer.dps.model</groupId>
+                                            <artifactId>dps-conf-models-jar</artifactId>
+                                            <classifier>xml</classifier>
+                                        </artifactItem>
+
+                                        <!-- Mediation Service models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model</groupId>
+                                            <artifactId>mediation-service-model-models</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Mediation Core models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>mediation-core-api-channel-models-xml</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Core Mediation API -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation</groupId>
+                                            <artifactId>core-mediation-api</artifactId>
+                                            <classifier>xml</classifier>
+                                            <destFileName>core-mediation-api.jar</destFileName>
+                                        </artifactItem>
+
+                                        <!-- Network Connector Configuration models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>network-connector-configuration-models-xml</artifactId>
+                                        </artifactItem>
+
+                                        <!-- CM Router Policy Model -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cm.policy</groupId>
+                                            <artifactId>cm-router-policy-model-xml</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Event models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cm.events</groupId>
+                                            <artifactId>sync-node-event-model-jar</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Software Sync Event model -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.events</groupId>
+                                            <artifactId>software-sync-event-model-jar</artifactId>
+                                            <classifier>xml</classifier>
+                                        </artifactItem>
+
+                                        <!-- Network Model Retriever Capability model -->
+                                        <dependency>
+                                            <groupId>com.ericsson.oss.mediation.modeling.tools</groupId>
+                                            <artifactId>network-model-retriever-capability-model-xml</artifactId>
+                                        </dependency>
+
+                                        <!-- Flow models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>mscm-healthcheck-flow-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cpp.subscription.flows</groupId>
+                                            <artifactId>subscription-flow-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cpp.subscription.flows</groupId>
+                                            <artifactId>subscription-validation-flow-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cpp.notificationhandling.flows</groupId>
+                                            <artifactId>notification-handling-flow-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.models.cm.mediation.flows</groupId>
+                                            <artifactId>sync-node-flow-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.flow</groupId>
+                                            <artifactId>cpp-software-sync-flow-model-xml</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cm.models.flows</groupId>
+                                            <artifactId>cpp-retrieve-mim-flow-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cm.handlers</groupId>
+                                            <artifactId>cpp-retrieve-mim-handlers-model</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Software Sync Handler models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.handlers</groupId>
+                                            <artifactId>ssh-credentials-manager-handler-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.handlers</groupId>
+                                            <artifactId>cpp-software-sync-handler-model-xml</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Subscription Handler models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cpp.subscription.handlers.model</groupId>
+                                            <artifactId>subscription-creation-handler-model-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cpp.subscription.handlers.model</groupId>
+                                            <artifactId>subscription-validation-handler-model-jar</artifactId>
+                                        </artifactItem>
+
+                                        <!-- MSCM healthcheck Handler models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>mscm-healthcheck-model-jar</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Notification Handler models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cpp.notificationhandling.handlers.model</groupId>
+                                            <artifactId>notification-receiver-handler-model-jar</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Sync Node Handler models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation.component</groupId>
+                                            <artifactId>inbound-dps-handler-model-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation.component</groupId>
+                                            <artifactId>sync-node-moci-handler-model-xml</artifactId>
+                                        </artifactItem>
+
+                                        <!-- CRUDA models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>cm-mediation-common-model-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.models.cpp.flows</groupId>
+                                            <artifactId>write-node-flow-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.models.cpp.flows</groupId>
+                                            <artifactId>read-non-persisted-values-flow-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.ned</groupId>
+                                            <artifactId>ned-mediation-models-models</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.ned</groupId>
+                                            <artifactId>ned-mediation-handlers-models</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation.component</groupId>
+                                            <artifactId>moci-handler-model-jar</artifactId>
+                                        </artifactItem>
+
+                                        <!-- CM Sync Mediation Configuration models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.mediation.cm.models</groupId>
+                                            <artifactId>CmSyncMediationConfigurationModel-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.mediation.cm.models</groupId>
+                                            <artifactId>CppMediationConfigurationModel-model</artifactId>
+                                        </artifactItem>
+
+                                        <!-- OSS Top model -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.model.onrm</groupId>
+                                            <artifactId>oss-top-model-models</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Network Element Definition model -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.model.ned</groupId>
+                                            <artifactId>network-element-definition-model-models</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Geo-location model -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.model.geolocation</groupId>
+                                            <artifactId>geo-location-model-xml</artifactId>
+                                        </artifactItem>
+
+                                        <!-- CM Function model -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.model.ned</groupId>
+                                            <artifactId>cm-function-model-models</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Connectivity Information models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.ci</groupId>
+                                            <artifactId>top-ci-model-models</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.ci</groupId>
+                                            <artifactId>cpp-ci-model-models</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.ci</groupId>
+                                            <artifactId>cpp-cm-ci-model-models</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.ci</groupId>
+                                            <artifactId>com-ci-model-xml</artifactId>
+                                        </artifactItem>
+
+                                        <!-- ERBS Network Resource models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>erbs-nodemodel-14a-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>erbs-nodemodel-14b-239-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>erbs-nodemodel-16a-124-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>erbs-nodemodel-16b-301-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>erbs-nodemodel-17a-40-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>rnc-node-model-16b-1543-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>erbs-nodemodel-17b-360-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>erbs-nodemodel-17Q3-80-jar</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Network Element Type models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>erbs-node-model-common-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.model.nrm.function</groupId>
+                                            <artifactId>rnc-node-model-common-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.eniq.topologyservice.model</groupId>
+                                            <artifactId>eniq-topology-service-model-config-model</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Model dependencies (required by node-model-common models) -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.autocellid.model</groupId>
+                                            <artifactId>autocellidmodel-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.nhm</groupId>
+                                            <artifactId>kpi-calculation-flow-model-jar</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.shm.models</groupId>
+                                            <artifactId>shm-models-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.pm</groupId>
+                                            <artifactId>pmul-service-model</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Security models -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.model.security</groupId>
+                                            <artifactId>nodesecuritymodel-xml</artifactId>
+                                            <destFileName>nodesecuritymodel-xml.jar</destFileName>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.model.security</groupId>
+                                            <artifactId>securitymodel-model</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.model.ned</groupId>
+                                            <artifactId>security-function-model-models</artifactId>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.security</groupId>
+                                            <artifactId>security-config-model-models</artifactId>
+                                        </artifactItem>
+
+                                        <!-- Upgrade Independence Models (required by SoftwareSync) -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.services.model</groupId>
+                                            <artifactId>upgrade-independence-models-model</artifactId>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+
+                            <!-- Unpack JBoss and modules -->
+                            <execution>
+                                <id>unpack-modules</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${jboss.modules.dir}</outputDirectory>
+                                    <artifactItems>
+                                        <!-- JBoss -->
+                                        <artifactItem>
+                                            <groupId>org.jboss.as</groupId>
+                                            <artifactId>jboss-as-dist</artifactId>
+                                            <type>zip</type>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+
+                                        <!-- Service Framework -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.sdk</groupId>
+                                            <artifactId>service-framework-bundle</artifactId>
+                                            <type>zip</type>
+                                        </artifactItem>
+
+                                        <!-- Model Service -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.modeling</groupId>
+                                            <artifactId>model-service-api-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.modeling</groupId>
+                                            <artifactId>model-service-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+
+                                        <!-- Mediation Engine -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation</groupId>
+                                            <artifactId>core-mediation-engine-api-module</artifactId>
+                                            <classifier>engine-api-module</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <!-- Mediation Service modules -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation</groupId>
+                                            <artifactId>mediation-camel-subsystem</artifactId>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation</groupId>
+                                            <artifactId>mediation-camel-module</artifactId>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation</groupId>
+                                            <artifactId>mediation-healthcheck</artifactId>
+                                            <type>zip</type>
+                                        </artifactItem>
+
+                                        <!-- Mediation Resolvers -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>mediation-resolver-spi-module</artifactId>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.resolver</groupId>
+                                            <artifactId>dps-attribute-resolver-module</artifactId>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.resolver</groupId>
+                                            <artifactId>request-attribute-resolver-module</artifactId>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <dependency>
+                                            <groupId>com.ericsson.oss.mediation.resolver</groupId>
+                                            <artifactId>tss-resolver-module</artifactId>
+                                            <type>zip</type>
+                                        </dependency>
+
+                                        <!-- Network Element Connector -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>network-element-connector-api-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+
+                                        <!-- Cryptography Service -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.security.cryptography</groupId>
+                                            <artifactId>cryptography-service-api-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.security.cryptography</groupId>
+                                            <artifactId>cryptography-service-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+
+                                        <!-- Transport API (required by ssh-credentials-manager) -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>transport-api-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>transport-provider-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>ssh-transport-library-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>ssh-transport-library-config-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <!-- FTP JCA -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.adapter.ftp</groupId>
+                                            <artifactId>ftp-jca-connector-api-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <!-- Network Model Retriever -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.modeling.tools</groupId>
+                                            <artifactId>network-model-retriever-api-module</artifactId>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                        <!-- Mom-Xml-Validator -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.modeling.momtools</groupId>
+                                            <artifactId>mom-xml-runtime-validator-module</artifactId>
+                                            <type>zip</type>
+                                            <classifier>package</classifier>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.router.policy</groupId>
+                                            <artifactId>mediation-router-policy-config-module</artifactId>
+                                            <version>${version.mediation-router-policy-sdk}</version>
+                                            <classifier>package</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+
+                            <!-- Copy all EARs to deployment dir -->
+                            <execution>
+                                <id>deploy-ear-to-jboss</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${jboss.deployments.dir}</outputDirectory>
+                                    <artifactItems>
+                                        <!-- Platform Integration Bridge EAR -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.common</groupId>
+                                            <artifactId>PlatformIntegrationBridge-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <!-- Mediation -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>mediation-router-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation</groupId>
+                                            <artifactId>mediation-service-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <!-- Mediation Clients -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.clients.supervision</groupId>
+                                            <artifactId>supervision-mediation-client-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>event-based-client-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>dps-based-client-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <!-- CM Mediation -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cm.policy</groupId>
+                                            <artifactId>cm-router-policy-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation</groupId>
+                                            <artifactId>network-element-connector-receiver-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cpp.notificationhandling.handlers.impl</groupId>
+                                            <artifactId>notification-receiver-handler-code-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cpp.subscription.handlers.impl</groupId>
+                                            <artifactId>subscription-creation-handler-code-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.cpp.subscription.handlers.impl</groupId>
+                                            <artifactId>subscription-validation-handler-code-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation.component</groupId>
+                                            <artifactId>sync-node-moci-handler-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.nms.mediation.component</groupId>
+                                            <artifactId>inbound-dps-handler-code-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <!-- Software Sync -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.handlers</groupId>
+                                            <artifactId>ssh-credentials-manager-handler-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.handlers</groupId>
+                                            <artifactId>cpp-software-sync-handler-code-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <!-- Network Model Retriever -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.adapter.ftp</groupId>
+                                            <artifactId>ftp-jca-connector-rar</artifactId>
+                                            <type>rar</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.modeling.tools</groupId>
+                                            <artifactId>cpp-network-model-retriever-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.modeling.tools</groupId>
+                                            <artifactId>network-model-retriever-transformer-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                        <!-- Handlers -->
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.mediation.ned</groupId>
+                                            <artifactId>ned-mediation-handlers-ear</artifactId>
+                                            <type>ear</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Create custom model jar -->
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <outputDirectory>${model.jars.dir}</outputDirectory>
+                            <finalName>cm-function-extension-model</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/test/resources/models/test-model-assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <!-- Setup model repo dir -->
+                            <execution>
+                                <id>create-modelrepo-dir</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <mkdir dir="${model.repo.dir}" />
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <!-- Copy JBoss resources -->
+                            <execution>
+                                <id>copy-jboss-resources</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!-- copy configuration -->
+                                        <copy todir="${jboss.home.dir}/standalone/configuration" overwrite="true">
+                                            <fileset dir="src/test/resources/jboss_settings" />
+                                        </copy>
+                                        <!-- copy mediation resolvers module -->
+                                        <copy todir="${jboss.modules.dir}/com/ericsson/oss/mediation/resolver/extensions/main" overwrite="true">
+                                            <fileset dir="src/test/resources/resolver" includes="module.xml" />
+                                            <filterset begintoken="${" endtoken="}">
+                                                <propertyset>
+                                                    <propertyref prefix="com.ericsson.oss.mediation.resolver:" />
+                                                </propertyset>
+                                            </filterset>
+                                        </copy>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <!-- Install Visibroker license -->
+                            <execution>
+                                <id>unpack-visibroker-licence</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <echo message="Unpacking Visibroker license..." />
+                                        <untar src="src/test/resources/visibroker/vblic.tar.gz" dest="${project.build.directory}" compression="gzip" />
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Call Model Deployment Tool -->
+                    <plugin>
+                        <groupId>com.ericsson.oss.itpf.modeling</groupId>
+                        <artifactId>model-deployment-jar</artifactId>
+                        <version>${version.mdt}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.ericsson.oss.itpf.modeling</groupId>
+                                <artifactId>default-mdt-plugins-jar</artifactId>
+                                <version>${version.mdt}</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>deploy-models</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>model-deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <jarFolder>${model.jars.dir}</jarFolder>
+                                    <modelRoot>${model.repo.dir}</modelRoot>
+                                    <xmlRepo>${xml.repo}</xmlRepo>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Call DPS plugin -->
+                    <plugin>
+                        <groupId>com.ericsson.oss.itpf.datalayer.dps</groupId>
+                        <artifactId>dps-maven-plugin</artifactId>
+                        <version>${version.dps}</version>
+                        <configuration>
+                            <persistenceLayer>Neo4J</persistenceLayer>
+                            <workDir>${project.build.directory}/dps_work</workDir>
+                            <jBossDir>${jboss.home.dir}</jBossDir>
+                            <outputDir>${jboss.deployments.dir}</outputDir>
+                            <modelDir>${model.repo.dir}</modelDir>
+                            <modelRepoXmlPath>${xml.repo}</modelRepoXmlPath>
+                            <useMockDelegate>false</useMockDelegate>
+                            <eapVersion>7</eapVersion>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>run-dps-maven-plugin</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>build-dps</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Run Arquillian tests -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <test>${testsuite}</test>
+                            <systemProperties>
+                                <jboss.home>${jboss.home.dir}</jboss.home>
+                                <arquillian.launch>jboss_managed</arquillian.launch>
+                            </systemProperties>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Setup and run a local Neo4j instance -->
+        <profile>
+            <id>setup_neo4j</id>
+            <properties>
+                <neo4jDir>${project.build.directory}/neo4j</neo4jDir>
+                <version.jdk11>11.0.18.0.1</version.jdk11>
+                <version.jdk11.tgz>11.0.18</version.jdk11.tgz>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Require Linux x64 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-os</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireOS>
+                                            <name>linux</name>
+                                            <arch>amd64</arch>
+                                        </requireOS>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Get JDK11 and Neo4j -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <!-- Unpack JDK11 into target dir -->
+                            <execution>
+                                <id>unpack-jdk11</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.3pp.oracle</groupId>
+                                            <artifactId>jdk11</artifactId>
+                                            <version>${version.jdk11.tgz}</version>
+                                            <classifier>x64_bin</classifier>
+                                            <type>tar.gz</type>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                            <overWrite>false</overWrite>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <!-- Copy Neo4j to target dir -->
+                            <execution>
+                                <id>download-neo4j</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${neo4jDir}</outputDirectory>
+                                    <stripVersion>true</stripVersion>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.ericsson.oss.itpf.datalayer.dps.3pp</groupId>
+                                            <artifactId>neo4j-java-driver-harness</artifactId>
+                                            <classifier>shaded</classifier>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Run Neo4j from target dir -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>exec-neo4j</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <workingDirectory>${neo4jDir}</workingDirectory>
+                                    <executable>${project.build.directory}/jdk-${version.jdk11}/bin/java</executable>
+                                    <arguments>
+                                        <argument>-Djava.io.tmpdir=${neo4jDir}</argument>
+                                        <argument>--add-opens</argument>
+                                        <argument>java.base/java.lang=ALL-UNNAMED</argument>
+                                        <argument>--add-opens</argument>
+                                        <argument>java.base/java.util=ALL-UNNAMED</argument>
+                                        <argument>--add-opens</argument>
+                                        <argument>java.base/java.io=ALL-UNNAMED</argument>
+                                        <argument>--add-opens</argument>
+                                        <argument>java.base/sun.nio.ch=ALL-UNNAMED</argument>
+                                        <argument>-jar</argument>
+                                        <argument>neo4j-java-driver-harness-shaded.jar</argument>
+                                    </arguments>
+                                    <outputFile>${neo4jDir}/neo4j.log</outputFile>
+                                    <async>true</async>
+                                    <asyncDestroyOnShutdown>true</asyncDestroyOnShutdown>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Wait for Neo4j to start -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>wait-maven-plugin</artifactId>
+                        <version>1.0</version>
+                        <executions>
+                            <execution>
+                                <id>wait-neo4j</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>wait</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- See: https://github.com/sonatype/wait-maven-plugin -->
+                                    <protocol>http</protocol>
+                                    <host>localhost</host>
+                                    <port>7474</port>
+                                    <file>/</file>
+                                    <timeout>5000</timeout>
+                                    <maxcount>20</maxcount>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

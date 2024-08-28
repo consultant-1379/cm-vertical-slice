@@ -1,0 +1,12 @@
+ERICjgroupsconfig_CXP9033554
+# NEO4J
+ERICneo4jjcaapi_CXP9032725
+ERICneo4jjca_CXP9032726
+ERICdpsneo4j_CXP9032728
+# SG Specific
+ERICmediationengineapi_CXP9031505
+ERICmediationrouter_CXP9031423
+ERICeventmediationclient_CXP9031422
+ERICsupervisionmediationclient_CXP9031281
+# CPP CM Policy
+#ERICcmrouterpolicy_CXP9032015

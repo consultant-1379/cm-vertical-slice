@@ -1,0 +1,2 @@
+# Put additional model RPMs here
+# e.g.: ERICxyz_CXP1234567:1.22.333

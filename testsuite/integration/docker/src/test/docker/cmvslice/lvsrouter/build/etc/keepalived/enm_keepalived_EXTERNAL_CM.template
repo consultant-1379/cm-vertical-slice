@@ -1,0 +1,11 @@
+vrrp_instance EXTERNAL_CM
+{
+state MASTER
+interface eth1
+virtual_router_id 71
+priority 110
+advert_int 5
+virtual_ipaddress {
+   #CM_VIP#
+}
+}

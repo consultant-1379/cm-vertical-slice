@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<jboss-ejb-client xmlns:xsi="urn:jboss:ejb-client:1.0" xsi:noNamespaceSchemaLocation="jboss-ejb-client_1_2.xsd">
+  <client-context>
+    <ejb-receivers exclude-local-receiver="false">
+      <remoting-ejb-receiver outbound-connection-ref="remote-ejb-connection-testhost">
+        <channel-creation-options>
+          <property name="org.xnio.Options.KEEP_ALIVE" value="true"/>
+        </channel-creation-options>
+      </remoting-ejb-receiver>
+    </ejb-receivers>
+    <clusters>
+      <cluster max-allowed-connected-nodes="20" name="testhost" username="ejbuser" security-realm="ejb-security-realm" cluster-node-selector="com.ericsson.oss.itpf.sdk.cluster.core.eservice.upgrade.UpgradeAwareRandomClusterNodeSelector">
+        <connection-creation-options>
+          <property name="org.xnio.Options.SSL_ENABLED" value="false"/>
+          <property name="org.xnio.Options.SASL_POLICY_NOANONYMOUS" value="false"/>
+          <property name="org.xnio.Options.SASL_DISALLOWED_MECHANISMS" value="JBOSS-LOCAL-USER"/>
+          <property name="org.xnio.Options.KEEP_ALIVE" value="true"/>
+          <property name="org.jboss.remoting3.RemotingOptions.HEARTBEAT_INTERVAL" value="60000"/>
+          <property name="org.xnio.Options.READ_TIMEOUT" value="180000"/>
+        </connection-creation-options>
+        <channel-creation-options>
+          <property name="org.xnio.Options.KEEP_ALIVE" value="true"/>
+        </channel-creation-options>
+      </cluster>
+    </clusters>
+  </client-context>
+</jboss-ejb-client>

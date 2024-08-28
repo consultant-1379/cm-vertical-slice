@@ -1,0 +1,20 @@
+When first running, or when any models/JBoss modules have been updated, or when the database has been cleaned-up, execute the following command:
+	mvn clean install -Pexecute_jee_tests | tee vs.log
+		or
+	mvn clean install -Pexecute_jee_tests,cloud_tunnel -Dvisibroker.ip=[Local host IP] | tee vs.log
+
+The maven property visibroker.ip must be provided when running against the cloud. This property value corresponds to your local host IP.
+Run ipconfig/ifconfig to determine this IP. This property is needed for netsim to know where to send back the notifications.
+
+For quicker subsequent runs, execute:
+	mvn install | tee vs.log
+		or
+	mvn install -Pcloud_tunnel -Dvisibroker.ip=[Local host IP] | tee vs.log
+
+It is also possible to specify a single suite or test case to be run, e.g.:
+	mvn install -Dtestsuite=FullSyncTest | tee vs.log
+		or
+	mvn install -Pcloud_tunnel -Dvisibroker.ip=[Local host IP] -Dtestsuite=FullSyncTest | tee vs.log
+
+More information:
+http://confluence-nam.lmera.ericsson.se/display/ENMR/Vertical+Slice

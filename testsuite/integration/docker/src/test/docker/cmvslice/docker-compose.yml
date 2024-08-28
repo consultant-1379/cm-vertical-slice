@@ -1,0 +1,308 @@
+version: "2.1"
+#
+# NOTE:
+# The values of the environment variables referenced in this file are specified in the environment file named '.env'.
+# See https://docs.docker.com/compose/environment-variables/
+#
+services:
+  initial-install:
+    build:
+      context: ./initial-install/build
+      args:
+        - MCAST_ADDR
+        - MCAST_MESSAGING_ADDR
+        - ENM_SHARED_DIR
+        - LVSROUTER_IP_INTERNAL
+        - CM_VIP
+        - MSCM=${MSCM1_IP_INTERNAL},${MSCM2_IP_INTERNAL}
+    volumes:
+      - /root/.ssh
+      - shared:${ENM_SHARED_DIR}
+      - upgrade-independence:/ericsson/configuration_management/UpgradeIndependence
+
+  lvsrouter:
+    build: ./lvsrouter/build
+    hostname: lvs-router
+    environment:
+      INTERNAL_SUBNET: ${INTERNAL_SUBNET}
+      EXTERNAL_SUBNET: ${EXTERNAL_SUBNET}
+      ENM_SHARED_DIR: ${ENM_SHARED_DIR}
+      DOCKER_INIT_DIR: ${DOCKER_INIT_DIR}
+      START_TCPDUMP: ${START_TCPDUMP}
+      CM_SECURE_PORT: ${CM_SECURE_PORT}
+      CM_UNSECURE_PORT: ${CM_UNSECURE_PORT}
+    depends_on:
+      - initial-install
+    volumes_from:
+      - initial-install
+    volumes:
+      - /lib/modules:/lib/modules
+      - ./lvsrouter/init:${DOCKER_INIT_DIR}
+      - ./output:/output
+    networks:
+      internal:
+        ipv4_address: ${LVSROUTER_IP_INTERNAL}
+      external:
+        ipv4_address: ${LVSROUTER_IP_EXTERNAL}
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: 1
+
+  models-0:
+    image: armdocker.rnd.ericsson.se/proj_oss_releases/enm/model-deployment:${ENM_ISO_VERSION}
+    hostname: models-0
+    environment:
+      IMAGE_NAME: model-deployment
+      ENM_SHARED_DIR: ${ENM_SHARED_DIR}
+      DOCKER_INIT_DIR: ${DOCKER_INIT_DIR}
+      DOCKER_RPMS_DIR: ${DOCKER_INIT_DIR}/rpms
+      DOCKER_PRE_START_DIR: ${DOCKER_INIT_DIR}/scripts/pre-start
+    command: startup.sh -IP -s container_startup.sh
+    depends_on:
+      - initial-install
+    volumes_from:
+      - initial-install
+    volumes:
+      - model-deployment:/etc/opt/ericsson/ERICmodeldeployment
+      - ./models/init:${DOCKER_INIT_DIR}
+    networks:
+      internal:
+        ipv4_address: ${MODELS0_IP_INTERNAL}
+
+  neo4j1:
+    image: armdocker.rnd.ericsson.se/proj_oss_releases/enm/neo4j4:${ENM_ISO_VERSION}
+    hostname: neo4j1
+    depends_on:
+      - initial-install
+    volumes_from:
+      - initial-install
+    networks:
+      internal:
+        ipv4_address: ${NEO4J1_IP_INTERNAL}
+
+  postgresql01:
+    image: armdocker.rnd.ericsson.se/proj_oss_releases/enm/postgres
+    hostname: postgresql01
+    networks:
+      internal:
+        ipv4_address: ${POSTGRESQL01_IP_INTERNAL}
+
+  jms01:
+    build: ./jms-server/build
+    hostname: jms01
+    environment:
+      ENM_SHARED_DIR: ${ENM_SHARED_DIR}
+    depends_on:
+      - initial-install
+    volumes_from:
+      - initial-install
+    expose:
+      - 5445
+      - 5455
+    networks:
+      internal:
+        aliases:
+          - jms-server
+        ipv4_address: ${JMS01_IP_INTERNAL}
+      messaging:
+        ipv4_address: ${JMS01_IP_MESSAGING}
+    cap_add:
+      - NET_ADMIN
+
+  mscm-1:
+    image: armdocker.rnd.ericsson.se/proj_oss_releases/enm/jboss-mediation:${ENM_ISO_VERSION}
+    hostname: mscm-1
+    environment:
+      IP_INTERNAL: ${MSCM1_IP_INTERNAL}
+      IP_MESSAGING: ${MSCM1_IP_MESSAGING}
+      HOST_IP_ADDRESS: ${INTERNAL_GATEWAY}
+      EXTERNAL_SUBNET: ${EXTERNAL_SUBNET}
+      LVSROUTER_IP_INTERNAL: ${LVSROUTER_IP_INTERNAL}
+      ENM_SHARED_DIR: ${ENM_SHARED_DIR}
+      DOCKER_DEFAULT_JVM_DIR: ${ENM_SHARED_DIR}/jboss/jvm
+      BYTEMAN_HOME: ${BYTEMAN_HOME}
+      JAVA_OPTS: "${JAVA_OPTS} -javaagent:${BYTEMAN_HOME}/lib/byteman.jar=listener:true,boot:${BYTEMAN_HOME}/lib/byteman.jar -Dorg.jboss.byteman.transform.all"
+      MEDLOGLEVEL: ${MEDLOGLEVEL:-INFO}
+      CM_SECURE_PORT: ${CM_SECURE_PORT}
+      CM_UNSECURE_PORT: ${CM_UNSECURE_PORT}
+      START_TCPDUMP: ${START_TCPDUMP}
+    depends_on:
+      - lvsrouter
+      - models-0
+      - neo4j1
+      - postgresql01
+      - jms01
+    volumes_from:
+      - models-0
+    volumes:
+      - ./mscm/init:${DOCKER_INIT_DIR}
+      - ./output:/output
+    networks:
+      internal:
+        ipv4_address: ${MSCM1_IP_INTERNAL}
+      messaging:
+        ipv4_address: ${MSCM1_IP_MESSAGING}
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "9997:9999"
+      - "9988:9990"
+      - "8078:8080"
+      - "8785:8787"
+
+  mscm-2:
+    image: armdocker.rnd.ericsson.se/proj_oss_releases/enm/jboss-mediation:${ENM_ISO_VERSION}
+    hostname: mscm-2
+    environment:
+      IP_INTERNAL: ${MSCM2_IP_INTERNAL}
+      IP_MESSAGING: ${MSCM2_IP_MESSAGING}
+      HOST_IP_ADDRESS: ${INTERNAL_GATEWAY}
+      EXTERNAL_SUBNET: ${EXTERNAL_SUBNET}
+      LVSROUTER_IP_INTERNAL: ${LVSROUTER_IP_INTERNAL}
+      ENM_SHARED_DIR: ${ENM_SHARED_DIR}
+      DOCKER_DEFAULT_JVM_DIR: ${ENM_SHARED_DIR}/jboss/jvm
+      BYTEMAN_HOME: ${BYTEMAN_HOME}
+      JAVA_OPTS: "${JAVA_OPTS} -javaagent:${BYTEMAN_HOME}/lib/byteman.jar=listener:true,boot:${BYTEMAN_HOME}/lib/byteman.jar -Dorg.jboss.byteman.transform.all"
+      MEDLOGLEVEL: ${MEDLOGLEVEL:-INFO}
+      CM_SECURE_PORT: ${CM_SECURE_PORT}
+      CM_UNSECURE_PORT: ${CM_UNSECURE_PORT}
+      START_TCPDUMP: ${START_TCPDUMP}
+    depends_on:
+      - lvsrouter
+      - models-0
+      - neo4j1
+      - postgresql01
+      - jms01
+    volumes_from:
+      - models-0
+    volumes:
+      - ./mscm/init:${DOCKER_INIT_DIR}
+      - ./output:/output
+    networks:
+      internal:
+        ipv4_address: ${MSCM2_IP_INTERNAL}
+      messaging:
+        ipv4_address: ${MSCM2_IP_MESSAGING}
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "9996:9999"
+      - "9987:9990"
+      - "8077:8080"
+      - "8784:8787"
+
+  medcore:
+    image: armdocker.rnd.ericsson.se/proj_oss_releases/enm/jboss-dps:${ENM_ISO_VERSION}
+    hostname: medcore
+    environment:
+      IP_INTERNAL: ${MEDCORE_IP_INTERNAL}
+      IP_MESSAGING: ${MEDCORE_IP_MESSAGING}
+      HOST_IP_ADDRESS: ${INTERNAL_GATEWAY}
+      ENM_SHARED_DIR: ${ENM_SHARED_DIR}
+      DOCKER_DEFAULT_JVM_DIR: ${ENM_SHARED_DIR}/jboss/jvm
+      JAVA_OPTS: ${JAVA_OPTS}
+    depends_on:
+      - models-0
+      - neo4j1
+      - postgresql01
+      - jms01
+    volumes_from:
+      - models-0
+    volumes:
+      - ./medcore/init:${DOCKER_INIT_DIR}
+    networks:
+      internal:
+        ipv4_address: ${MEDCORE_IP_INTERNAL}
+      messaging:
+        ipv4_address: ${MEDCORE_IP_MESSAGING}
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "9998:9999"
+      - "9989:9990"
+      - "8079:8080"
+      - "8786:8787"
+
+  testhost:
+    image: armdocker.rnd.ericsson.se/proj_oss_releases/enm/jboss-dps:${ENM_ISO_VERSION}
+    hostname: testhost
+    environment:
+      IP_INTERNAL: ${TESTHOST_IP_INTERNAL}
+      IP_MESSAGING: ${TESTHOST_IP_MESSAGING}
+      HOST_IP_ADDRESS: ${INTERNAL_GATEWAY}
+      EXTERNAL_SUBNET: ${EXTERNAL_SUBNET}
+      LVSROUTER_IP_INTERNAL: ${LVSROUTER_IP_INTERNAL}
+      ENM_SHARED_DIR: ${ENM_SHARED_DIR}
+      DOCKER_DEFAULT_JVM_DIR: ${ENM_SHARED_DIR}/jboss/jvm
+      JAVA_OPTS: ${JAVA_OPTS}
+    depends_on:
+      - lvsrouter
+      - models-0
+      - neo4j1
+      - postgresql01
+      - jms01
+      - netsim
+    volumes_from:
+      - models-0
+    volumes:
+      - ./testhost/init:${DOCKER_INIT_DIR}
+      - ./output:/opt/cucumber-report
+    networks:
+      internal:
+        ipv4_address: ${TESTHOST_IP_INTERNAL}
+      messaging:
+        ipv4_address: ${TESTHOST_IP_MESSAGING}
+    extra_hosts:
+      - "netsim:${NETSIM_IP}"
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "9999:9999"
+      - "9990:9990"
+      - "8080:8080"
+      - "8787:8787"
+
+  netsim:
+    image: armdocker.rnd.ericsson.se/proj_oss_releases/enm/netsim_v2:17.4
+    hostname: netsim
+    networks:
+      external:
+        ipv4_address: ${NETSIM_IP}
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+    environment:
+      - DISPLAY
+      - ENTRYPOINT_ARGS=--regExp LTE02 --numOfNes 1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: ${INTERNAL_SUBNET}
+        gateway: ${INTERNAL_GATEWAY}
+  messaging:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: ${MESSAGING_SUBNET}
+    internal: true
+  external:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: ${EXTERNAL_SUBNET}
+        gateway: ${EXTERNAL_GATEWAY}
+    internal: true
+
+volumes:
+  shared:
+  model-deployment:
+  upgrade-independence:

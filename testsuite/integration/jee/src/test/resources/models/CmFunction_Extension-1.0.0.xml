@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pte:PrimaryTypeExtensionDefinition
+	xmlns:oss_common="urn:com:ericsson:schema:xml:oss:oss_common" xmlns:pt="urn:com:ericsson:schema:xml:oss:dps_primarytype"
+	xmlns:pte="urn:com:ericsson:schema:xml:oss:dps_primarytype_ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" oss_common:ns="OSS_NE_CM_DEF"
+	oss_common:name="CmFunction_Extension" oss_common:version="1.0.0">
+
+	<oss_common:modelCreationInfo author="ebribyr"
+		creationDate="Wed Oct 20 16:45:38 GMT 2014">
+		<oss_common:designedModel componentId="cm-function-extension-model-jar" />
+	</oss_common:modelCreationInfo>
+
+	<oss_common:desc>Model extension for CmFunction. Needed to test the
+		syncStatus is changed.</oss_common:desc>
+
+	<oss_common:extendedModelElement urn="//OSS_NE_CM_DEF/CmFunction/*" />
+
+	<pte:primaryTypeAttributeExtension
+		attrName="syncStatus">
+		<pte:changeEventHandling onModifyAttr="NAME PRIOR_VALUE VALUE" />
+	</pte:primaryTypeAttributeExtension>
+
+</pte:PrimaryTypeExtensionDefinition>

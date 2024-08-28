@@ -1,0 +1,39 @@
+#!/bin/sh
+# Short-Description: Start/Stop JBoss AS v7.0.0
+#
+JBOSS_IP="10.45.239.30"
+JBOSS_HOME="/opt/ericsson/enendju2/"
+#JBOSS_HOME="/opt/ericsson/enendju/jboss-eap-6.1/"
+JBOSS_ARGS="-Dnenad=\"nenad is a dick\""
+JBOSS_OFFSET=0
+[ -r /etc/profile.d/java.sh ] && . /etc/profile.d/java.sh
+PATH=/usr/bin:/sbin:/bin:/usr/sbin
+export PATH
+progpath=${JBOSS_HOME}/bin
+prog=standalone.sh
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+if [ $# -ne 3 ] ; then 
+  echo "Usage : $0 [start|stop] [jboss_offset_port] [jboss_args]" 
+  exit	
+fi 
+JBOSS_OFFSET=$(($2+9999))
+JBOSS_ARGS=$3
+
+
+case "$1" in
+    start)
+        echo "Starting JBoss AS 7.0.0 for Arquillian Test "
+        $progpath/$prog -c standalone-full.xml $JBOSS_ARGS >/dev/null 2>&1 &
+    ;;
+    stop)
+        echo "Stopping JBoss AS 7.0.0 for Arquillian Test"
+        $progpath/jboss-cli.sh --connect --controller=$JBOSS_IP:$JBOSS_OFFSET -c "shutdown" 2>&1 &
+    ;;
+    *)
+        echo "Usage: /etc/init.d/jboss {start|stop}"
+        exit 1
+    ;;
+esac
+exit 0

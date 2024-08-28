@@ -1,0 +1,2 @@
+com.ericsson.oss.mediation:ERICneconn_CXP9030958
+ERICmediationrouterpolicyconfigmodule_CXP9039667

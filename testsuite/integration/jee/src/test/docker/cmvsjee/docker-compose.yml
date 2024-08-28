@@ -1,0 +1,29 @@
+version: "2.2"
+
+services:
+  netsim:
+    image: armdocker.rnd.ericsson.se/proj_oss_releases/enm/netsim_v2:17.4
+    init: true
+    hostname: netsim
+    networks:
+      internal:
+        ipv4_address: 192.168.100.253
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+    environment:
+      - DISPLAY
+      - ENTRYPOINT_ARGS=-regExp NONE -numOfNes 0
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./sims:/netsim/sims
+
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.100.0/24
+        gateway: 192.168.100.254

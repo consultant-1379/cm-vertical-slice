@@ -1,0 +1,11 @@
+Dependencies: org.slf4j,
+ javaee.api,
+ org.jboss.dmr,
+ org.jboss.as.controller-client,
+ com.ericsson.oss.itpf.modeling.modelservice.api export meta-inf,
+ com.ericsson.oss.itpf.datalayer.dps.api annotations export,
+ com.ericsson.oss.itpf.datalayer.dps.delegate.api export,
+ com.ericsson.oss.mediation.engine-api export,
+ com.ericsson.oss.mediation.network.api export,
+ com.ericsson.oss.itpf.security.cryptography.api services export meta-inf,
+ com.ericsson.oss.itpf.security.cryptography.impl services export meta-inf

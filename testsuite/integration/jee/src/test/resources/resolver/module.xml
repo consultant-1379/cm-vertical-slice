@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.1" name="com.ericsson.oss.mediation.resolver.extensions"
+    slot="main">
+    <!-- THIS MODULE IS USED FOR ALL ATTRIBUTE RESOLVERS TO MEDIATION ENGINE. IT DEPENDS ON RESOLVER API MODULE TO BRING IN RESOLVER API LIBRARIES. -->
+    <resources>
+        <!-- LIST YOUR EXTENSIONS, RESOLVERS ETC BELOW OR ADD DEPENDENCY TO YOUR MODULE -->
+    </resources>
+
+    <dependencies>
+        <module name="com.ericsson.oss.mediation.resolver.dps-attribute-resolver" slot="${com.ericsson.oss.mediation.resolver:dps-attribute-resolver-module:zip.version}" export="true" services="export" />
+        <module name="com.ericsson.oss.mediation.resolver.request-attribute-resolver" slot="${com.ericsson.oss.mediation.resolver:request-attribute-resolver-module:zip.version}" export="true" services="export" />
+        <module name="com.ericsson.oss.mediation.resolver.tss-resolver" slot="${com.ericsson.oss.mediation.resolver:tss-resolver-module:zip.version}" export="true" services="export" />
+    </dependencies>
+</module>

@@ -1,0 +1,17 @@
+# Purpose:
+# Reads global-properties file into an associative array
+# GLOBAL_PROPERTIES_ARRAY, any script requiring
+# access to global-properties should source this file
+##############################################################
+
+unset GLOBAL_PROPERTIES_ARRAY
+declare -A GLOBAL_PROPERTIES_ARRAY
+
+populate_global_properties_array() {
+    IFS=$'\n' readarray global_properties < "${ENM_SHARED_DIR}/global.properties"
+    for element in ${global_properties[@]}; do
+        GLOBAL_PROPERTIES_ARRAY[${element%%=*}]=${element#*=}
+    done
+}
+
+populate_global_properties_array

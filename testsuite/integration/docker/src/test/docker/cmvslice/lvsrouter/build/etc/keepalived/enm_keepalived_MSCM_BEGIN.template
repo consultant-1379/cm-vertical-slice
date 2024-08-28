@@ -1,0 +1,6 @@
+virtual_server #CM_VIP# #CM_PORT#
+{
+delay_loop 6
+lb_algo sh
+lb_kind NAT
+protocol TCP
